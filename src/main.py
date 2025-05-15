@@ -1,8 +1,10 @@
 import sys
+
 from src.api.hh_api import HeadHunterAPI
 from src.models.vacancy import Vacancy
 from src.storage.json_storage import JSONStorage
-from src.utils.filters import filter_vacancies, sort_vacancies, get_top_vacancies
+from src.utils.filters import (filter_vacancies, get_top_vacancies,
+                               sort_vacancies)
 
 
 def user_interaction():
@@ -20,8 +22,14 @@ def user_interaction():
             raise ValueError("Поисковый запрос не может быть пустым")
 
         top_n = int(input("Введите количество вакансий для вывода в топ N: "))
-        filter_words = input("Введите ключевые слова для фильтрации (через пробел): ").strip().split()
-        salary_input = input("Введите минимальную зарплату (Enter для пропуска): ").strip()
+        filter_words = (
+            input("Введите ключевые слова для фильтрации (через пробел): ")
+            .strip()
+            .split()
+        )
+        salary_input = input(
+            "Введите минимальную зарплату (Enter для пропуска): "
+        ).strip()
 
         # Получение и обработка вакансий
         print("\nПолучаем вакансии с HeadHunter...")
@@ -35,9 +43,15 @@ def user_interaction():
         if salary_input:
             try:
                 min_salary = int(salary_input)
-                vacancies = [v for v in vacancies if v.salary_from >= min_salary]
+                vacancies = [
+                    v
+                    for v in vacancies
+                    if v.salary_from and v.salary_from >= min_salary
+                ]
             except ValueError:
-                print("Некорректное значение зарплаты, фильтрация по зарплате пропущена")
+                print(
+                    "Некорректное значение зарплаты, фильтрация по зарплате пропущена"
+                )
 
         # Сохранение и вывод результатов
         for vacancy in vacancies:
@@ -52,9 +66,15 @@ def user_interaction():
         else:
             for i, vacancy in enumerate(top_vacancies, 1):
                 print(f"\n{i}. {vacancy.title}")
-                print(f"   Зарплата: {vacancy.salary_from or 'не указана'} - {vacancy.salary_to or ''}")
-                print(f"   Требования: {vacancy.requirements[:100]}...")
-                print(f"   Описание: {vacancy.description[:100]}...")
+                salary_from = (
+                    vacancy.salary_from if vacancy.salary_from else "не указана"
+                )
+                salary_to = vacancy.salary_to if vacancy.salary_to else "не указана"
+                print(f"   Зарплата: {salary_from} - {salary_to}")
+                print(
+                    f"   Требования: {(vacancy.requirements or 'не указаны')[:100]}..."
+                )
+                print(f"   Описание: {(vacancy.description or 'не указано')[:100]}...")
                 print(f"   Ссылка: {vacancy.url}")
 
         print(f"\nВсего найдено вакансий: {len(vacancies)}")

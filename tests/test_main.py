@@ -1,9 +1,11 @@
-import pytest
-from unittest.mock import patch, MagicMock
 import sys
 from io import StringIO
-from src.models.vacancy import Vacancy
+from unittest.mock import patch
+
+import pytest
+
 from src.main import user_interaction
+from src.models.vacancy import Vacancy
 
 
 class TestMain:
@@ -17,14 +19,14 @@ class TestMain:
             salary_from=100000,
             salary_to=150000,
             description="Develop web applications",
-            requirements="Python experience"
+            requirements="Python experience",
         )
 
-    @patch('builtins.input')
-    @patch('main.HeadHunterAPI')
-    @patch('main.JSONStorage')
+    @patch("builtins.input")
+    @patch("main.HeadHunterAPI")
+    @patch("main.JSONStorage")
     def test_user_interaction_success(
-            self, mock_storage, mock_api, mock_input, sample_vacancy
+        self, mock_storage, mock_api, mock_input, sample_vacancy
     ):
         """Тест успешного выполнения user_interaction"""
         # Настройка моков
@@ -32,20 +34,22 @@ class TestMain:
             "Python",  # Поисковый запрос
             "2",  # Количество вакансий
             "Django",  # Ключевые слова
-            "100000"  # Минимальная зарплата
+            "100000",  # Минимальная зарплата
         ]
 
         # Мок API
         api_instance = mock_api.return_value
-        api_instance.get_vacancies.return_value = [{
-            'name': 'Python Developer',
-            'alternate_url': 'http://example.com',
-            'salary': {'from': 100000, 'to': 150000},
-            'snippet': {
-                'requirement': 'Python Django',
-                'responsibility': 'Develop web applications'
+        api_instance.get_vacancies.return_value = [
+            {
+                "name": "Python Developer",
+                "alternate_url": "http://example.com",
+                "salary": {"from": 100000, "to": 150000},
+                "snippet": {
+                    "requirement": "Python Django",
+                    "responsibility": "Develop web applications",
+                },
             }
-        }]
+        ]
 
         # Мок хранилища
         storage_instance = mock_storage.return_value
@@ -66,7 +70,7 @@ class TestMain:
         finally:
             sys.stdout = saved_stdout
 
-    @patch('builtins.input')
+    @patch("builtins.input")
     def test_user_interaction_empty_query(self, mock_input):
         """Тест обработки пустого поискового запроса"""
         mock_input.return_value = ""
@@ -83,8 +87,8 @@ class TestMain:
         finally:
             sys.stderr = saved_stderr
 
-    @patch('builtins.input')
-    @patch('main.HeadHunterAPI')
+    @patch("builtins.input")
+    @patch("main.HeadHunterAPI")
     def test_user_interaction_api_error(self, mock_api, mock_input):
         """Тест обработки ошибки API"""
         mock_input.side_effect = ["Python", "2", "", ""]
@@ -104,12 +108,10 @@ class TestMain:
         finally:
             sys.stderr = saved_stderr
 
-    @patch('builtins.input')
-    @patch('main.HeadHunterAPI')
-    @patch('main.JSONStorage')
-    def test_user_interaction_no_results(
-            self, mock_storage, mock_api, mock_input
-    ):
+    @patch("builtins.input")
+    @patch("main.HeadHunterAPI")
+    @patch("main.JSONStorage")
+    def test_user_interaction_no_results(self, mock_storage, mock_api, mock_input):
         """Тест случая, когда нет результатов"""
         mock_input.side_effect = ["Python", "2", "Java", ""]
 

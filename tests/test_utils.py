@@ -1,11 +1,8 @@
 import pytest
+
 from src.models.vacancy import Vacancy
-from src.utils.filters import (
-    filter_vacancies,
-    get_vacancies_by_salary,
-    sort_vacancies,
-    get_top_vacancies
-)
+from src.utils.filters import (filter_vacancies, get_top_vacancies,
+                               get_vacancies_by_salary, sort_vacancies)
 
 
 class TestFilters:
@@ -16,7 +13,7 @@ class TestFilters:
         return [
             Vacancy("Python", "url1", 100000, 150000, "Python Django", "Python"),
             Vacancy("Java", "url2", 90000, 120000, "Java Spring", "Java"),
-            Vacancy("Fullstack", "url3", 120000, None, "Python JavaScript", "JS")
+            Vacancy("Fullstack", "url3", 120000, None, "Python JavaScript", "JS"),
         ]
 
     def test_filter_vacancies(self, sample_vacancies):
