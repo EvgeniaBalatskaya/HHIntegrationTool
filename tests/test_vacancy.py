@@ -1,4 +1,5 @@
 import pytest
+
 from src.models.vacancy import Vacancy
 
 
@@ -13,7 +14,7 @@ class TestVacancy:
             salary_from=100000,
             salary_to=150000,
             description="Develop software",
-            requirements="Python experience"
+            requirements="Python experience",
         )
 
     def test_vacancy_creation(self, sample_vacancy):
@@ -40,15 +41,14 @@ class TestVacancy:
 
     def test_cast_to_object_list(self):
         """Тест преобразования JSON в объекты"""
-        json_data = [{
-            "name": "Dev",
-            "alternate_url": "http://example.com",
-            "salary": {"from": 100000, "to": 150000},
-            "snippet": {
-                "requirement": "Python",
-                "responsibility": "Develop"
+        json_data = [
+            {
+                "name": "Dev",
+                "alternate_url": "http://example.com",
+                "salary": {"from": 100000, "to": 150000},
+                "snippet": {"requirement": "Python", "responsibility": "Develop"},
             }
-        }]
+        ]
         vacancies = Vacancy.cast_to_object_list(json_data)
 
         assert len(vacancies) == 1
@@ -58,14 +58,13 @@ class TestVacancy:
 
     def test_cast_to_object_list_no_salary(self):
         """Тест преобразования при отсутствии зарплаты"""
-        json_data = [{
-            "name": "Dev",
-            "alternate_url": "http://example.com",
-            "snippet": {
-                "requirement": "Python",
-                "responsibility": "Develop"
+        json_data = [
+            {
+                "name": "Dev",
+                "alternate_url": "http://example.com",
+                "snippet": {"requirement": "Python", "responsibility": "Develop"},
             }
-        }]
+        ]
         vacancies = Vacancy.cast_to_object_list(json_data)
 
         assert vacancies[0].salary_from == 0
