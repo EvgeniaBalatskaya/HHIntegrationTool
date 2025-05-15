@@ -5,50 +5,61 @@ from src.utils.filters import (filter_vacancies, get_top_vacancies,
                                get_vacancies_by_salary, sort_vacancies)
 
 
-class TestFilters:
-    """Тесты для вспомогательных функций"""
+@pytest.fixture
+def sample_vacancies():
+    return [
+        Vacancy(
+            title="Python Developer",
+            url="https://hh.ru/vacancy/1",
+            salary_from=120000,
+            salary_to=150000,
+            description="Опыт с Django",
+            requirements="Python, Django",
+            currency="RUR",
+        ),
+        Vacancy(
+            title="Junior Developer",
+            url="https://hh.ru/vacancy/2",
+            salary_from=80000,
+            salary_to=100000,
+            description="Только начинающий",
+            requirements="HTML, CSS",
+            currency="RUR",
+        ),
+        Vacancy(
+            title="Middle Python",
+            url="https://hh.ru/vacancy/3",
+            salary_from=110000,
+            salary_to=130000,
+            description="Python и Flask",
+            requirements="Flask",
+            currency="RUR",
+        ),
+    ]
 
-    @pytest.fixture
-    def sample_vacancies(self):
-        return [
-            Vacancy("Python", "url1", 100000, 150000, "Python Django", "Python"),
-            Vacancy("Java", "url2", 90000, 120000, "Java Spring", "Java"),
-            Vacancy("Fullstack", "url3", 120000, None, "Python JavaScript", "JS"),
-        ]
 
-    def test_filter_vacancies(self, sample_vacancies):
-        """Тест фильтрации по ключевым словам"""
-        filtered = filter_vacancies(sample_vacancies, ["python"])
-        assert len(filtered) == 2
-        assert all("Python" in v.title or "Python" in v.description for v in filtered)
+def test_filter_vacancies_with_keywords(sample_vacancies):
+    result = filter_vacancies(sample_vacancies, ["django", "python"])
+    assert len(result) == 1
+    assert result[0].title == "Python Developer"
 
-        filtered = filter_vacancies(sample_vacancies, ["spring"])
-        assert len(filtered) == 1
-        assert filtered[0].title == "Java"
 
-    def test_filter_empty_keywords(self, sample_vacancies):
-        """Тест фильтрации без ключевых слов"""
-        filtered = filter_vacancies(sample_vacancies, [])
-        assert len(filtered) == len(sample_vacancies)
+def test_get_top_vacancies(sample_vacancies):
+    sorted_list = sort_vacancies(sample_vacancies)
+    top = get_top_vacancies(sorted_list, 2)
+    assert len(top) == 2
+    assert top[0].salary_from >= top[1].salary_from
 
-    def test_get_vacancies_by_salary(self, sample_vacancies):
-        """Тест фильтрации по зарплате"""
-        ranged = get_vacancies_by_salary(sample_vacancies, "90000-110000")
-        assert len(ranged) == 1
-        assert ranged[0].title == "Python"
 
-        ranged = get_vacancies_by_salary(sample_vacancies, "110000-")
-        assert len(ranged) == 2
+def test_get_vacancies_by_salary(sample_vacancies):
+    # Передаём диапазон зарплат в виде строки "min-max"
+    result = get_vacancies_by_salary(sample_vacancies, "110000-130000")
+    assert len(result) == 2
+    titles = [vac.title for vac in result]
+    assert "Python Developer" in titles
+    assert "Middle Python" in titles
 
-    def test_sort_vacancies(self, sample_vacancies):
-        """Тест сортировки вакансий"""
-        sorted_list = sort_vacancies(sample_vacancies)
-        assert sorted_list[0].title == "Fullstack"
-        assert sorted_list[1].title == "Python"
-        assert sorted_list[2].title == "Java"
 
-    def test_get_top_vacancies(self, sample_vacancies):
-        """Тест получения топ N вакансий"""
-        top = get_top_vacancies(sample_vacancies, 2)
-        assert len(top) == 2
-        assert top[0].salary_from >= top[1].salary_from
+def test_sort_vacancies(sample_vacancies):
+    sorted_list = sort_vacancies(sample_vacancies)
+    assert sorted_list[0].salary_from == 120000

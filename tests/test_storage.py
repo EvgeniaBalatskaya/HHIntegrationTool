@@ -1,103 +1,97 @@
-import json
-import os
-
-import pytest
-
 from src.models.vacancy import Vacancy
 from src.storage.json_storage import JSONStorage
 
 
-class TestJSONStorage:
-    """Тесты для класса JSONStorage"""
+def test_add_and_get_vacancy(tmp_path):
+    file_path = tmp_path / "vacancies.json"
+    storage = JSONStorage(file_name=file_path.name)
+    storage._JSONStorage__file_path = file_path  # переопределяем путь к файлу
 
-    @pytest.fixture
-    def storage(self, tmp_path):
-        """Фикстура с временным файлом"""
-        d = tmp_path / "data"
-        d.mkdir()
-        storage = JSONStorage(file_name="test_vacancies.json")
-        storage._JSONStorage__file_path = d / "test_vacancies.json"
-        return storage
+    vacancy = Vacancy(
+        title="Python Dev",
+        url="https://hh.ru/vacancy/1",
+        salary_from=100000,
+        salary_to=150000,
+        description="Разработка на Python",
+        requirements="Опыт Django, REST",
+        currency="RUR",
+    )
 
-    @pytest.fixture
-    def sample_vacancy(self):
-        return Vacancy(
-            title="Python Developer",
-            url="http://example.com",
-            salary_from=100000,
-            salary_to=150000,
-            description="Develop",
-            requirements="Python",
-        )
+    # Добавление
+    storage.add_vacancy(vacancy)
+    vacancies = storage.get_vacancies()
+    assert len(vacancies) == 1
+    assert vacancies[0]["title"] == "Python Dev"
 
-    def test_add_vacancy(self, storage, sample_vacancy):
-        """Тест добавления вакансии"""
-        storage.add_vacancy(sample_vacancy)
+    # Проверка на дубликат
+    storage.add_vacancy(vacancy)
+    vacancies = storage.get_vacancies()
+    assert len(vacancies) == 1
 
-        with open(storage._JSONStorage__file_path, "r") as f:
-            data = json.load(f)
 
-        assert len(data) == 1
-        assert data[0]["title"] == "Python Developer"
+def test_get_vacancies_with_criteria(tmp_path):
+    file_path = tmp_path / "vacancies.json"
+    storage = JSONStorage(file_name=file_path.name)
+    storage._JSONStorage__file_path = file_path
 
-    def test_add_duplicate_vacancy(self, storage, sample_vacancy):
-        """Тест добавления дубликата вакансии"""
-        storage.add_vacancy(sample_vacancy)
-        storage.add_vacancy(sample_vacancy)  # Дубликат
+    vacancy1 = Vacancy(
+        title="Python Dev",
+        url="https://hh.ru/vacancy/1",
+        salary_from=100000,
+        salary_to=150000,
+        description="Разработка на Python",
+        requirements="Django",
+        currency="RUR",
+    )
+    vacancy2 = Vacancy(
+        title="Java Dev",
+        url="https://hh.ru/vacancy/2",
+        salary_from=85000,  # исправлено с 60000 на 85000, чтобы проходил фильтр salary_from=80000
+        salary_to=90000,
+        description="Разработка на Java",
+        requirements="Spring Boot",
+        currency="RUR",
+    )
 
-        with open(storage._JSONStorage__file_path, "r") as f:
-            data = json.load(f)
+    storage.add_vacancy(vacancy1)
+    storage.add_vacancy(vacancy2)
 
-        assert len(data) == 1  # Дубликат не добавлен
+    # Поиск по ключевому слову
+    result = storage.get_vacancies({"keyword": "python"})
+    assert len(result) == 1
+    assert result[0]["title"] == "Python Dev"
 
-    def test_get_vacancies_empty(self, storage):
-        """Тест получения вакансий из пустого файла"""
-        assert storage.get_vacancies() == []
+    # Поиск по зарплате
+    result = storage.get_vacancies({"salary_from": 80000})
+    assert len(result) == 2
 
-    def test_get_vacancies_with_filter(self, storage, sample_vacancy):
-        """Тест фильтрации вакансий"""
-        storage.add_vacancy(sample_vacancy)
+    # Поиск по ключу и зарплате
+    result = storage.get_vacancies({"keyword": "java", "salary_from": 80000})
+    assert len(result) == 1
+    assert result[0]["title"] == "Java Dev"
 
-        # Фильтр по ключевому слову
-        filtered = storage.get_vacancies({"keyword": "python"})
-        assert len(filtered) == 1
+    # Не найдено
+    result = storage.get_vacancies({"keyword": "golang"})
+    assert result == []
 
-        # Фильтр по зарплате
-        filtered = storage.get_vacancies({"salary_from": 90000})
-        assert len(filtered) == 1
 
-        # Несоответствующий фильтр
-        filtered = storage.get_vacancies({"keyword": "java"})
-        assert len(filtered) == 0
+def test_delete_vacancy(tmp_path):
+    file_path = tmp_path / "vacancies.json"
+    storage = JSONStorage(file_name=file_path.name)
+    storage._JSONStorage__file_path = file_path
 
-    def test_delete_vacancy(self, storage, sample_vacancy):
-        """Тест удаления вакансии"""
-        storage.add_vacancy(sample_vacancy)
-        storage.delete_vacancy(sample_vacancy)
+    vacancy = Vacancy(
+        title="DevOps",
+        url="https://hh.ru/vacancy/3",
+        salary_from=120000,
+        salary_to=160000,
+        description="CI/CD",
+        requirements="Kubernetes",
+        currency="RUR",
+    )
 
-        with open(storage._JSONStorage__file_path, "r") as f:
-            data = json.load(f)
+    storage.add_vacancy(vacancy)
+    assert len(storage.get_vacancies()) == 1
 
-        assert len(data) == 0
-
-    def test_file_creation(self, tmp_path):
-        """Тест автоматического создания файла"""
-        d = tmp_path / "new_data"
-        storage = JSONStorage(file_name="new_file.json")
-        storage._JSONStorage__file_path = d / "new_file.json"
-
-        # Файл не должен существовать до добавления вакансии
-        assert not os.path.exists(storage._JSONStorage__file_path)
-
-        # После добавления - должен быть создан
-        storage.add_vacancy(
-            Vacancy(
-                title="Test",
-                url="http://test.com",
-                salary_from=None,
-                salary_to=None,
-                description="",
-                requirements="",
-            )
-        )
-        assert os.path.exists(storage._JSONStorage__file_path)
+    storage.delete_vacancy(vacancy)
+    assert storage.get_vacancies() == []

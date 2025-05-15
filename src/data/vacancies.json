@@ -3574,5 +3574,61 @@
     "salary_to": 200000.0,
     "description": "",
     "requirements": "Знание системы контроля версий Git. Будет плюсом: - Знание и опыт работы с <highlighttext>Python</highlighttext>, Apache Airflow и Greenplum. - Опыт написания интеграционных..."
+  },
+  {
+    "title": "Backend-разработчик",
+    "url": "https://hh.ru/vacancy/120587381",
+    "salary_from": null,
+    "salary_to": null,
+    "description": "Участие в разработке REST API. Написание серверной логики под наставничеством. Работа с базами данных (PostgreSQL, MongoDB и др.).",
+    "requirements": "Знание одного из языков: Node.js, <highlighttext>Python</highlighttext>, Go или PHP. Понимание архитектуры клиент-серверных приложений. Умение работать с Git."
+  },
+  {
+    "title": "Senior Software Engineer",
+    "url": "https://hh.ru/vacancy/120580770",
+    "salary_from": 5000.0,
+    "salary_to": 9000.0,
+    "description": "Разрабатывать MVP-решения для задач из различных областей (генерация текста / аудио, сбор данных, извлечение блокчейн данных). Проектировать и разрабатывать архитектуру...",
+    "requirements": "Отличное знание <highlighttext>Python</highlighttext>, опыт работы с микросервсными фрейворками. Опыт работы от 4 лет; опыт разработки на <highlighttext>Python</highlighttext> от 3 года."
+  },
+  {
+    "title": "QA инженер",
+    "url": "https://hh.ru/vacancy/120590895",
+    "salary_from": null,
+    "salary_to": null,
+    "description": "Проектирование и автоматизация на <highlighttext>Python</highlighttext> функциональных тестов для сервисов, реализующих конвейеры трансформации данных (ETL). Проектирование метрик качества над витринами данных...",
+    "requirements": "Опыт от 2-х лет в QA. Опыт разработки автоматизированных тестов с использованием <highlighttext>Python</highlighttext>. Владение SQL на продвинутом уровне."
+  },
+  {
+    "title": "Инженер-программист",
+    "url": "https://hh.ru/vacancy/120565869",
+    "salary_from": 90000.0,
+    "salary_to": 90000.0,
+    "description": "Разработка ПО для нужд компании. Поддержка работы и рефакторинг кода существующего ПО.",
+    "requirements": "Будет плюсом: Опыт с Docker, Git. Владение Node.js, <highlighttext>python</highlighttext>, JavaScript, HTML, CSS. Знание SQL, Sybase ASA 17, PostgresSQL."
+  },
+  {
+    "title": "Системный администратор",
+    "url": "https://hh.ru/vacancy/120537130",
+    "salary_from": null,
+    "salary_to": null,
+    "description": "Настройка и сопровождение комплексов онлайн-трансляций (аудио, видео, выпуск). Обслуживание серверов в офисе и в дата-центре (Linux и Windows).",
+    "requirements": "Умение автоматизировать задачи с помощью скриптовых языков (bash, <highlighttext>Python</highlighttext> и др.). Понимание сетевых технологий: маршрутизация, адресация, туннелирование, анализ трафика."
+  },
+  {
+    "title": "Веб-программист",
+    "url": "https://hh.ru/vacancy/120086517",
+    "salary_from": 53000.0,
+    "salary_to": 155000.0,
+    "description": "Разработка крупных сложных сайтов или заказного веб-ориентированного программного обеспечения. Разработка нагруженного сайта или оптимизация скорости работы существующего.",
+    "requirements": "PHP (\"1С-Битрикс\", Wordpress, Laravel). <highlighttext>Python</highlighttext>. MySQL. Gitlab. Jira. PhpStorm."
+  },
+  {
+    "title": "Data Engineer",
+    "url": "https://hh.ru/vacancy/120548958",
+    "salary_from": null,
+    "salary_to": null,
+    "description": "Сбором, преобразованием и стандартизацией данных из различных источников. Составлением пайплайнов трансформации данных с помощью фреймворка DBT (Greenplum, Clickhouse).",
+    "requirements": "Базовый уровень владения <highlighttext>Python</highlighttext> (в области разработки ETL или конвейеров данных), желательно знакомство с библиотеками pandas, numpy, seaborn."
   }
 ]
