@@ -1,8 +1,11 @@
-from typing import List, Dict
+from typing import List
+
 from src.models.vacancy import Vacancy
 
 
-def filter_vacancies(vacancies: List[Vacancy], filter_words: List[str]) -> List[Vacancy]:
+def filter_vacancies(
+    vacancies: List[Vacancy], filter_words: List[str]
+) -> List[Vacancy]:
     """
     Фильтрует вакансии по ключевым словам в описании
 
@@ -21,7 +24,9 @@ def filter_vacancies(vacancies: List[Vacancy], filter_words: List[str]) -> List[
     return filtered
 
 
-def get_vacancies_by_salary(vacancies: List[Vacancy], salary_range: str) -> List[Vacancy]:
+def get_vacancies_by_salary(
+    vacancies: List[Vacancy], salary_range: str
+) -> List[Vacancy]:
     """
     Фильтрует вакансии по диапазону зарплат
 
@@ -33,11 +38,17 @@ def get_vacancies_by_salary(vacancies: List[Vacancy], salary_range: str) -> List
         return vacancies
 
     try:
-        min_salary, max_salary = map(int, salary_range.split('-'))
+        min_salary, max_salary = map(int, salary_range.split("-"))
     except ValueError:
         return vacancies
 
-    return [v for v in vacancies if min_salary <= v.salary_from <= max_salary]
+    filtered = []
+    for v in vacancies:
+        if v.salary_from is None:
+            continue
+        if min_salary <= v.salary_from <= max_salary:
+            filtered.append(v)
+    return filtered
 
 
 def sort_vacancies(vacancies: List[Vacancy]) -> List[Vacancy]:
